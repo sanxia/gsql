@@ -9,6 +9,7 @@ import (
 
 sqlBuilder := gsql.NewSqlBuilder()
 sqlBuilder.Configs = gsql.DatabaseConfigList{
+
     gsql.DatabaseConfig{
         Source: gsql.DatabaseSource{
             Username: "sanxia",
