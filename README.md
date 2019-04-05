@@ -55,7 +55,8 @@ sqlBuilder.Configs = gsql.DatabaseConfigList{
 sqlBuilder.Build()
 
 
----Result---
+----- Builder Result -----
+=====
 Create Database:
 =====
     1. sanxia_user_00000
