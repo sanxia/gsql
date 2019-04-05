@@ -55,3 +55,25 @@ sqlBuilder.Configs = gsql.DatabaseConfigList{
 sqlBuilder.Build()
 
 
+---Result---
+Create Database:
+=====
+    1. sanxia_user_00000
+    -----
+    Create Table:
+    -----
+    1.1 sx_user_account_00000
+    1.2 sx_user_account_00001
+    1.3 sx_user_profile_00000
+    1.4 sx_user_profile_00001
+
+    2. sanxia_user_00001
+    -----
+    Create Table:
+    -----
+    2.1 sx_user_account_00000
+    2.2 sx_user_account_00001
+    2.3 sx_user_profile_00000
+    2.4 sx_user_profile_00001
+
+
