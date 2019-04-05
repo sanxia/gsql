@@ -41,9 +41,11 @@ sqlBuilder.Build()
 ----- Sql File Path -----
 =====
 sql_builer.go
-+ sql
-+ --- databasename
-     --- tablename.sql
+sql
+
+--- databasename
+
+    --- tablename.sql
 
 
 
