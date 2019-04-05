@@ -44,9 +44,9 @@ main.go
 
 sql
 
---- databasename
+-- databasename
 
-    --- tablename.sql
+    -- tablename.sql
 
 
 
