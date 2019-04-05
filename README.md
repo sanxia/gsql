@@ -38,6 +38,13 @@ sqlBuilder.Configs = gsql.DatabaseConfigList{
 sqlBuilder.Build()
 
 
+----- Sql File Path -----
+=====
+sql_builer.go
++ sql
++ --- databasename
+     --- tablename.sql
+
 
 
 ----- Builder Result -----
