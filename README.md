@@ -8,6 +8,7 @@ import (
 )
 
 sqlBuilder := gsql.NewSqlBuilder()
+
 sqlBuilder.Configs = gsql.DatabaseConfigList{
 
     gsql.DatabaseConfig{
