@@ -8,22 +8,16 @@ import (
 )
 
 sqlBuilder := gsql.NewSqlBuilder()
-
 sqlBuilder.Configs = gsql.DatabaseConfigList{
-
     gsql.DatabaseConfig{
         Source: gsql.DatabaseSource{
             Username: "sanxia",
             Password: "sanxia",
             Host:     "127.0.0.1:3306",
         },
-
         Name:  "sanxia_user",
-
         Count: 2,
-
         TableConfigs: gsql.TableConfigList{
-
             gsql.TableConfig{
                 Name:  "sx_user_account",
                 Count: 2,
@@ -34,16 +28,14 @@ sqlBuilder.Configs = gsql.DatabaseConfigList{
                 Count: 2,
                 IsNew: true,
             },
-
         },
-
         IsNew: true,
-
     },
-
 }
 
 sqlBuilder.Build()
+
+
 
 
 ----- Builder Result -----
