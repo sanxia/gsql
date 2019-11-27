@@ -22,13 +22,14 @@ import (
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 type DatabaseList []*Database
 type Database struct {
-	db           *sql.DB
 	Source       DatabaseSource
-	tables       TableList
-	Name         string
-	shardingName string
-	Sql          string
-	IsNew        bool
+	Name         string    //数据库名称
+	Sql          string    //sql语句
+	shardingName string    //数据库分片名称
+	tables       TableList //表集合
+	db           *sql.DB
+	IsNew        bool //是否重新创建
+	IsBuilded    bool //是否已生成过
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -36,11 +37,12 @@ type Database struct {
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 type TableList []*Table
 type Table struct {
+	Name         string //表名称
+	Sql          string //sql语句
+	shardingName string //表分片名称
 	Database     *Database
-	Name         string
-	shardingName string
-	Sql          string
-	IsNew        bool
+	IsNew        bool //是否重新创建
+	IsBuilded    bool //是否已生成过
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -59,9 +61,9 @@ func (s *Database) Open(args ...string) error {
 		return err
 	}
 
-	db.SetConnMaxLifetime(10 * time.Minute)
-	db.SetMaxOpenConns(128)
 	db.SetMaxIdleConns(16)
+	db.SetMaxOpenConns(256)
+	db.SetConnMaxLifetime(5 * time.Second)
 
 	s.db = db
 
@@ -72,6 +74,8 @@ func (s *Database) Open(args ...string) error {
  * 运行Sql语句
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *Database) Exec(sql string, args ...string) (sql.Result, error) {
+	defer s.Close()
+
 	if s.db == nil {
 		database := ""
 		if len(args) > 0 {
@@ -97,6 +101,8 @@ func (s *Database) Exec(sql string, args ...string) (sql.Result, error) {
  * Sql集合查询
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *Database) Query(sql string, args ...string) ([]map[string]interface{}, error) {
+	defer s.Close()
+
 	if s.db == nil {
 		database := ""
 		if len(args) > 0 {

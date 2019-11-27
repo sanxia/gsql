@@ -46,33 +46,32 @@ func (s *sqlBuilder) config() {
 	for _, databaseConfig := range s.Configs {
 		for i := 0; i < databaseConfig.Count; i++ {
 			database := new(Database)
+			database.tables = make(TableList, 0)
 			database.Source = databaseConfig.Source
 			database.Name = databaseConfig.Name
+			database.IsNew = databaseConfig.IsNew
+			database.IsBuilded = databaseConfig.IsBuilded
 
-			if databaseConfig.Count > 1 {
-				database.shardingName = fmt.Sprintf("%s_%05d", database.Name, i)
+			if databaseConfig.IsSharding {
+				database.shardingName = fmt.Sprintf("%s-%d", database.Name, i)
 			} else {
 				database.shardingName = database.Name
 			}
-
-			database.IsNew = databaseConfig.IsNew
-
-			database.tables = make(TableList, 0)
 
 			for _, tableConfig := range databaseConfig.TableConfigs {
 				for j := 0; j < tableConfig.Count; j++ {
 					table := new(Table)
 					table.Name = tableConfig.Name
 
-					if tableConfig.Count > 1 {
-						table.shardingName = fmt.Sprintf("%s_%05d", table.Name, j)
-
+					if tableConfig.IsSharding {
+						table.shardingName = fmt.Sprintf("%s-%d", table.Name, j)
 					} else {
 						table.shardingName = table.Name
 					}
 
 					table.Database = database
 					table.IsNew = tableConfig.IsNew
+					table.IsBuilded = tableConfig.IsBuilded
 
 					database.tables = append(database.tables, table)
 				}
@@ -84,12 +83,13 @@ func (s *sqlBuilder) config() {
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *  生成
+ * 生成数据库
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *sqlBuilder) Build() {
 	s.config()
 
 	for _, database := range s.databases {
+
 		s.createDatabase(database)
 
 		for _, table := range database.tables {
@@ -104,7 +104,9 @@ func (s *sqlBuilder) Build() {
  * 创建数据库
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *sqlBuilder) createDatabase(database *Database) {
-	defer database.Close()
+	if database.IsBuilded {
+		return
+	}
 
 	if database.IsNew {
 		sql := fmt.Sprintf("DROP DATABASE IF EXISTS `%s`;", database.shardingName)
@@ -125,9 +127,11 @@ func (s *sqlBuilder) createDatabase(database *Database) {
  * 创建数据表
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *sqlBuilder) createTable(table *Table) {
-	defer table.Database.Close()
+	if table.IsBuilded {
+		return
+	}
 
-	if table.Database.IsNew || table.IsNew {
+	if table.IsNew {
 		sql := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", table.shardingName)
 		if _, err := table.Database.Exec(sql, table.Database.shardingName); err != nil {
 			log.Printf("sqlDb.Exec error: %v", err)

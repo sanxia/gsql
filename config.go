@@ -12,11 +12,13 @@ package gsql
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 type DatabaseConfigList []DatabaseConfig
 type DatabaseConfig struct {
-	TableConfigs TableConfigList
-	Source       DatabaseSource
 	Name         string
 	Count        int
+	TableConfigs TableConfigList
+	Source       DatabaseSource
 	IsNew        bool
+	IsSharding   bool //是否分片
+	IsBuilded    bool //是否已生成过
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -24,9 +26,11 @@ type DatabaseConfig struct {
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 type TableConfigList []TableConfig
 type TableConfig struct {
-	Name  string
-	Count int
-	IsNew bool
+	Name       string
+	Count      int
+	IsNew      bool
+	IsSharding bool //是否分片
+	IsBuilded  bool //是否已生成过
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
